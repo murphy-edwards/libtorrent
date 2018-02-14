@@ -82,7 +82,7 @@ ChunkSelector::update_priorities() {
   m_sharedQueue.clear();
 
   if (m_position == invalid_chunk)
-    m_position = random() % size();
+    m_position = 0;
 
   advance_position();
 }
@@ -99,14 +99,6 @@ ChunkSelector::find(PeerChunks* pc, __UNUSED bool highPriority) {
   // performance hit as it compares against a bitfield we know has all
   // set.
   rak::partial_queue* queue = pc->is_seeder() ? &m_sharedQueue : pc->download_cache();
-
-  // Randomize position on average every 16 chunks to prevent
-  // inefficient distribution with a slow seed and fast peers
-  // all arriving at the same position.
-  if ((random() & 63) == 0) {
-    m_position = random() % size();
-    queue->clear();
-  }
 
   if (queue->is_enabled()) {
 
